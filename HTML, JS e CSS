@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leilão Terra - Catálogo de Antiguidades</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #f4f1eb 0%, #e8ddd4 100%);
+            color: #5d4e37;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #d4c4a8 0%, #c9b99b 100%);
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(93, 78, 55, 0.1);
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            color: #5d4e37;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #8b7355;
+            font-style: italic;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .auction-info {
+            background: rgba(212, 196, 168, 0.3);
+            padding: 2rem;
+            margin: 2rem 0;
+            border-radius: 15px;
+            text-align: center;
+            border: 2px solid #d4c4a8;
+        }
+
+        .auction-info h2 {
+            color: #5d4e37;
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+
+        .timer {
+            font-size: 2rem;
+            color: #a0845c;
+            font-weight: bold;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 10px;
+            display: inline-block;
+        }
+
+        .catalog {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .item-card {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 25px rgba(93, 78, 55, 0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #e8ddd4;
+        }
+
+        .item-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 35px rgba(93, 78, 55, 0.25);
+        }
+
+        .item-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(45deg, #d4c4a8, #c9b99b);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            border: 2px solid #e8ddd4;
+            color: #8b7355;
+            font-size: 1rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .placeholder-text {
+            padding: 1rem;
+            font-style: italic;
+        }
+
+        .item-title {
+            font-size: 1.4rem;
+            color: #5d4e37;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .item-description {
+            color: #8b7355;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .item-price {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .current-bid {
+            font-size: 1.3rem;
+            color: #a0845c;
+            font-weight: bold;
+        }
+
+        .bid-count {
+            color: #8b7355;
+            font-size: 0.9rem;
+        }
+
+        .bid-button {
+            width: 100%;
+            padding: 0.8rem;
+            background: linear-gradient(135deg, #a0845c 0%, #8b7355 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .bid-button:hover {
+            background: linear-gradient(135deg, #8b7355 0%, #5d4e37 100%);
+            transform: translateY(-2px);
+        }
+
+        .bid-button:active {
+            transform: translateY(0);
+        }
+
+        .footer {
+            background: #5d4e37;
+            color: #f4f1eb;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 4rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(93, 78, 55, 0.8);
+        }
+
+        .modal-content {
+            background: #f4f1eb;
+            margin: 15% auto;
+            padding: 2rem;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            border: 3px solid #d4c4a8;
+        }
+
+        .close {
+            color: #8b7355;
+            float: right;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .close:hover {
+            color: #5d4e37;
+        }
+
+        .bid-input {
+            width: 100%;
+            padding: 0.8rem;
+            margin: 1rem 0;
+            border: 2px solid #d4c4a8;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .catalog {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 0 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1>Leilão Doce</h1>
+            <p>Bolos Artesanais e Criações Exclusivas</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="auction-info">
+            <h2>Leilão de Bolos ao Vivo</h2>
+            <p>Leilão especial termina em:</p>
+            <div class="timer" id="timer">02:45:30</div>
+            <p>Lance nos bolos mais deliciosos da cidade!</p>
+        </div>
+
+        <div class="catalog" id="catalog">
+            <!-- Items serão gerados pelo JavaScript -->
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Leilão Doce. Todos os direitos reservados.</p>
+            <p>Bolos artesanais e leilões doces desde 2020</p>
+        </div>
+    </footer>
+
+    <!-- Modal para fazer lance -->
+    <div id="bidModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Fazer Lance</h2>
+            <p id="modalItemName"></p>
+            <p>Lance atual: <span id="modalCurrentBid"></span></p>
+            <input type="number" id="bidAmount" class="bid-input" placeholder="Digite seu lance">
+            <button onclick="submitBid()" class="bid-button">Confirmar Lance</button>
+        </div>
+    </div>
+
+    <script>
+        // Dados dos itens do leilão
+        const auctionItems = [
+            {
+                id: 1,
+                name: "Bolo Red Velvet Premium",
+                description: "Bolo red velvet de 3 camadas com cream cheese e decoração artesanal. Serve 12 pessoas.",
+                currentBid: 180,
+                bidCount: 12,
+                imageUrl: ""
+            },
+            {
+                id: 2,
+                name: "Torta de Chocolate Belga",
+                description: "Torta gourmet com chocolate belga 70% cacau, ganache e frutas vermelhas frescas.",
+                currentBid: 220,
+                bidCount: 8,
+                imageUrl: ""
+            },
+            {
+                id: 3,
+                name: "Bolo de Casamento Vintage",
+                description: "Bolo de 2 andares decorado com flores de açúcar e detalhes em pasta americana.",
+                currentBid: 450,
+                bidCount: 15,
+                imageUrl: ""
+            },
+            {
+                id: 4,
+                name: "Cheesecake de Frutas Vermelhas",
+                description: "Cheesecake cremoso com base de biscoito e cobertura de frutas vermelhas da estação.",
+                currentBid: 160,
+                bidCount: 6,
+                imageUrl: ""
+            },
+            {
+                id: 5,
+                name: "Cupcakes Gourmet (Dúzia)",
+                description: "Conjunto de 12 cupcakes com sabores variados e decoração personalizada.",
+                currentBid: 95,
+                bidCount: 22,
+                imageUrl: ""
+            },
+            {
+                id: 6,
+                name: "Bolo Naked Cake Rústico",
+                description: "Bolo estilo naked cake com recheio de doce de leite e decoração com flores naturais.",
+                currentBid: 280,
+                bidCount: 9,
+                imageUrl: ""
+            }
+        ];
+
+        let currentBidItem = null;
+
+        // Função para renderizar o catálogo
+        function renderCatalog() {
+            const catalog = document.getElementById('catalog');
+            catalog.innerHTML = '';
+
+            auctionItems.forEach(item => {
+                const itemCard = document.createElement('div');
+                itemCard.className = 'item-card';
+                itemCard.innerHTML = `
+                    <div class="item-image">
+                        ${item.imageUrl ? `<img src="${item.imageUrl}" alt="${item.name}" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\'placeholder-text\\'>Espaço para foto do bolo</div>';">` : '<div class="placeholder-text">Espaço para foto do bolo</div>'}
+                    </div>
+                    <div class="item-title">${item.name}</div>
+                    <div class="item-description">${item.description}</div>
+                    <div class="item-price">
+                        <span class="current-bid">R$ ${item.currentBid.toLocaleString()}</span>
+                        <span class="bid-count">${item.bidCount} lances</span>
+                    </div>
+                    <button class="bid-button" onclick="openBidModal(${item.id})">Fazer Lance</button>
+                `;
+                catalog.appendChild(itemCard);
+            });
+        }
+
+        // Função para abrir modal de lance
+        function openBidModal(itemId) {
+            const item = auctionItems.find(i => i.id === itemId);
+            currentBidItem = item;
+            
+            document.getElementById('modalItemName').textContent = item.name;
+            document.getElementById('modalCurrentBid').textContent = `R$ ${item.currentBid.toLocaleString()}`;
+            document.getElementById('bidAmount').value = '';
+            document.getElementById('bidAmount').min = item.currentBid + 50;
+            document.getElementById('bidModal').style.display = 'block';
+        }
+
+        // Função para fechar modal
+        function closeBidModal() {
+            document.getElementById('bidModal').style.display = 'none';
+            currentBidItem = null;
+        }
+
+        // Função para submeter lance
+        function submitBid() {
+            const bidAmount = parseInt(document.getElementById('bidAmount').value);
+            
+            if (!bidAmount || bidAmount <= currentBidItem.currentBid) {
+                alert('O lance deve ser maior que o valor atual!');
+                return;
+            }
+
+            // Atualizar o item com o novo lance
+            currentBidItem.currentBid = bidAmount;
+            currentBidItem.bidCount += 1;
+
+            // Re-renderizar o catálogo
+            renderCatalog();
+            
+            // Fechar modal
+            closeBidModal();
+            
+            // Mostrar confirmação
+            alert(`Lance de R$ ${bidAmount.toLocaleString()} confirmado para ${currentBidItem.name}!`);
+        }
+
+        // Timer do leilão
+        function updateTimer() {
+            const timerElement = document.getElementById('timer');
+            let time = timerElement.textContent.split(':');
+            let hours = parseInt(time[0]);
+            let minutes = parseInt(time[1]);
+            let seconds = parseInt(time[2]);
+
+            seconds--;
+            if (seconds < 0) {
+                seconds = 59;
+                minutes--;
+                if (minutes < 0) {
+                    minutes = 59;
+                    hours--;
+                    if (hours < 0) {
+                        hours = 0;
+                        minutes = 0;
+                        seconds = 0;
+                    }
+                }
+            }
+
+            timerElement.textContent = 
+                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            renderCatalog();
+            setInterval(updateTimer, 1000);
+        });
+
+        // Fechar modal ao clicar no X ou fora do modal
+        document.querySelector('.close').onclick = closeBidModal;
+        window.onclick = function(event) {
+            const modal = document.getElementById('bidModal');
+            if (event.target === modal) {
+                closeBidModal();
+            }
+        }
+
+        // Permitir Enter para submeter lance
+        document.getElementById('bidAmount').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                submitBid();
+            }
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98163c4fe44bf1cd',t:'MTc1ODI1NTA1MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
