@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leilão Terra - Catálogo de Antiguidades</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1>Leilão Doce</h1>
+            <p>Bolos Artesanais e Criações Exclusivas</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="auction-info">
+            <h2>Leilão de Bolos ao Vivo</h2>
+            <p>Leilão especial termina em:</p>
+            <div class="timer" id="timer" data-auction-end="{{ auction_end }}"></div>
+            <p>Lance nos bolos mais deliciosos da cidade!</p>
+        </div>
+
+        <div class="catalog" id="catalog">
+            <!-- Items serão gerados pelo JavaScript -->
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Leilão Doce. Todos os direitos reservados.</p>
+            <p>Bolos artesanais e leilões doces desde 2020</p>
+        </div>
+    </footer>
+
+    <!-- Modal para fazer lance -->
+    <div id="bidModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Fazer Lance</h2>
+            <p id="modalItemName"></p>
+            <p>Lance atual: <span id="modalCurrentBid"></span></p>
+            <input type="number" id="bidAmount" class="bid-input" placeholder="Digite seu lance">
+            <button onclick="submitBid()" class="bid-button">Confirmar Lance</button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
